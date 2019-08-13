@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class dimensionHolder{
+class DimensionHolder{
  double height;
  double width;
 
-  dimensionHolder(this.height, this.width);
+  DimensionHolder(this.height, this.width);
 }
 
 class Coin {

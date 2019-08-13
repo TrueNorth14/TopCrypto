@@ -11,7 +11,6 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 //3 god bless em
 
 Map<String, dynamic> data;
-dimensionHolder dimensions = new dimensionHolder(0, 0);
 
 //Map<String, String> _coinNames = {"Bitcoin": "BTC", "Ethereum": "ETH"};
 
@@ -19,41 +18,22 @@ class MyAppState extends State<MyApp> {
   static int _pageNumber = 0;
   static final _titles = ["Coins", "News", "Alerts"];
   static List<dynamic> _coins;
+  static DimensionHolder dimensions = new DimensionHolder(100, 200);
 
   static Future<List<Coin>> _getCoinData() async {
     List<Coin> crypto = [];
-    //int index = 0;
 
-    //check if called
     print("called");
 
     var response = await http.get(
         Uri.encodeFull('https://api.coinranking.com/v1/public/coins'),
         headers: {'accept': 'application/json'});
 
-    //check if got response
-    //print(response.body);
-
     var responseToJson = jsonDecode(response.body);
     data = responseToJson['data'];
     _coins = data['coins'];
 
-    //print(_coins.length);
-
-    //check if coins loaded
-    //print(_coins);
-
     for (var coin in _coins) {
-      /*
-      print(coin["id"]);
-      print(coin["symbol"]);
-      print(coin["name"]);
-      print(coin["iconUrl"]);
-      print(coin["price"]);
-      print(coin["change"]);
-      print(coin["history"]);
-      */
-      //if(coin["id"] is int){ print("double");}
       if (coin["change"] is int) {
         coin["change"] = coin["change"].toDouble();
         print("worked");
@@ -105,13 +85,16 @@ class MyAppState extends State<MyApp> {
             );
           }
 
-          return ListView.builder(
-            //itemCount: _coins.length,
-            itemCount: snapshot.data.length,
-            scrollDirection: Axis.vertical,
-            itemBuilder: (BuildContext context, int index) {
-              return getCard(snapshot.data[index]);
-            },
+          return Scrollbar(
+            child: ListView.builder(
+              //itemCount: _coins.length,
+              physics: AlwaysScrollableScrollPhysics(),
+              itemCount: snapshot.data.length,
+              scrollDirection: Axis.vertical,
+              itemBuilder: (BuildContext context, int index) {
+                return getCard(snapshot.data[index]);
+              },
+            ),
           );
         }),
     Text("News Page"),
@@ -128,8 +111,7 @@ class MyAppState extends State<MyApp> {
             _titles[_pageNumber],
             style: TextStyle(color: Colors.white),
           ),
-          elevation: 24,
-          backgroundColor: Colors.blue,
+          elevation: 0,
         ),
         /*
         appBar: AppBar(
@@ -170,12 +152,7 @@ class MyAppState extends State<MyApp> {
       ),
     );
   }
-
-  void decreaseScale(){
-    //decreases scale idk man
-  }
 }
-
 
 Widget getCard(Coin c) {
   //String _shortHand = "unknown";
@@ -183,24 +160,22 @@ Widget getCard(Coin c) {
   return Padding(
     padding: EdgeInsets.all(5),
     child: GestureDetector(
-      onTapDown:(TapDownDetails) { 
-        print("tapped"); 
-        
+      onTapDown: (TapDownDetails) {
+        print("tapped");
       },
       onTap: () {
         //print("$coinData");
         print("pressed $c");
-        
       },
-      //child: SizedBox(
-        //height: 230,
+      child: SizedBox(
+        height: 230,
         child: AnimatedContainer(
           duration: Duration(seconds: 1),
           curve: Curves.elasticInOut,
-          height: dimensions.height,
-          width: dimensions.width,
+          //height: MyAppState.dimensions.height,
+          //width: MyAppState.dimensions.width,
           child: Card(
-            elevation: 40,
+            elevation: 20,
             borderOnForeground: true,
             //borderRadius: BorderRadius.circular(8),
 
@@ -278,29 +253,11 @@ Widget getCard(Coin c) {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter),
                 ),
-
-                /*
-              Container(
-                constraints: BoxConstraints(
-                    maxHeight: 50, maxWidth: 50, minHeight: 50, minWidth: 50),
-                child: Padding(
-                  padding: EdgeInsets.all(5),
-                  child: SvgPicture.network(c.iconUrl),
-                ),
-              ),
-              Row(
-                children: <Widget>[
-                  Text(
-                    c.name + " (" + c.symbol + ")",
-                    textScaleFactor: 1.5,
-                  ),
-                ],
-              )*/
               ],
             ),
           ),
         ),
-      //),
+      ),
     ),
   );
 }
