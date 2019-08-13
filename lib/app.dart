@@ -1,12 +1,9 @@
-import 'package:flutter/semantics.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'main.dart';
 import 'utilities.dart';
-import 'package:flutter_sparkline/flutter_sparkline.dart';
 import 'CardItem.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 //3 god bless em
@@ -67,8 +64,7 @@ class MyAppState extends State<MyApp> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    dimensions.height = 230;
-    dimensions.width = 400;
+    
   }
 
   final List _pages = [
