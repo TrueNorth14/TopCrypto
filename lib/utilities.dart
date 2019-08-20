@@ -1,11 +1,27 @@
+import 'package:e_pal/detailscreen.dart';
 import 'package:flutter/material.dart';
+import 'package:charts_flutter/flutter.dart';
 
-class DimensionHolder{
- double height;
- double width;
+class DimensionHolder {
+  double height;
+  double width;
 
   DimensionHolder(this.height, this.width);
 }
+
+
+class CoinHistory {
+  final double change;
+  final List priceTime;
+
+  CoinHistory(this.change, this.priceTime);
+
+  @override
+  String toString() {
+    return change.toString() + " " + priceTime.toString();
+  }
+}
+
 
 class Coin {
   final int index;
@@ -33,22 +49,24 @@ class Coin {
         " " +
         this.history.toString() +
         " " +
-        this.color;
+        this.color +
+        " " +
+        this.index.toString();
   }
 }
 
 int getColorFromHex(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll("#", "");
-    if (hexColor.length == 6) {
-      hexColor = "FF" + hexColor;
-    }
-    return int.parse(hexColor, radix: 16);
+  hexColor = hexColor.toUpperCase().replaceAll("#", "");
+  if (hexColor.length == 6) {
+    hexColor = "FF" + hexColor;
+  }
+  return int.parse(hexColor, radix: 16);
 }
 
-List<double> convertListDouble(List<dynamic> original){
+List<double> convertListDouble(List<dynamic> original) {
   List<double> newList = List(original.length);
 
-  for(int i = 0; i<original.length; i++){
+  for (int i = 0; i < original.length; i++) {
     newList[i] = double.parse(original[i]);
   }
 
@@ -57,8 +75,6 @@ List<double> convertListDouble(List<dynamic> original){
 
 RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
 Function mathFunc = (Match match) => '${match[1]},';
-
-
 
 /*
 String printCoins(List x) {
@@ -71,3 +87,52 @@ String printCoins(List x) {
   return _coinStr;
 }
 */
+
+List<Series<MyRow, DateTime>> createChartData(List coinHistory, double change) {
+  List<MyRow> data = [
+    /*
+      new MyRow(new DateTime(2017, 9, 25), 6),
+      new MyRow(new DateTime(2017, 9, 26), 8),
+      new MyRow(new DateTime(2017, 9, 27), 6),
+      new MyRow(new DateTime(2017, 9, 28), 9),
+      new MyRow(new DateTime(2017, 9, 29), 11),
+      new MyRow(new DateTime(2017, 9, 30), 15),
+      new MyRow(new DateTime(2017, 10, 01), 25),
+      new MyRow(new DateTime(2017, 10, 02), 33),
+      new MyRow(new DateTime(2017, 10, 03), 27),
+      new MyRow(new DateTime(2017, 10, 04), 31),
+      new MyRow(new DateTime(2017, 10, 05), 23),
+      */
+  ];
+
+  for (var point in coinHistory) {
+    //print(point["timestamp"]);
+    data.add(new MyRow(DateTime.fromMillisecondsSinceEpoch(point["timestamp"]),
+        double.parse(point["price"])));
+  }
+
+  //print(data[0]);
+  return [
+    new Series<MyRow, DateTime>(
+      id: 'Cost',
+      domainFn: (MyRow row, _) => row.timeStamp,
+      measureFn: (MyRow row, _) => row.cost,
+      colorFn: (MyRow row, _) => (change > 0)
+          ? MaterialPalette.green.shadeDefault.darker
+          : MaterialPalette.red.shadeDefault,
+      data: data,
+      
+    )
+  ];
+}
+
+/// Sample time series data type.
+class MyRow {
+  final DateTime timeStamp;
+  final double cost;
+  MyRow(this.timeStamp, this.cost);
+
+  String toString() {
+    return timeStamp.toString();
+  }
+}

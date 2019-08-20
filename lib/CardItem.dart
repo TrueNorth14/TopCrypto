@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'utilities.dart';
 import 'package:flutter_sparkline/flutter_sparkline.dart';
 
+
 class CardItem extends StatelessWidget {
   final Coin c;
 
@@ -10,7 +11,7 @@ class CardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    
     return Padding(
       padding: EdgeInsets.all(5),
       child: GestureDetector(
@@ -26,7 +27,7 @@ class CardItem extends StatelessWidget {
           child: Container(
             height: 230,
             child: Card(
-              elevation: 20,
+              elevation: 50,
               borderOnForeground: true,
               //borderRadius: BorderRadius.circular(8),
 

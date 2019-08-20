@@ -64,7 +64,6 @@ class MyAppState extends State<MyApp> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    
   }
 
   final List _pages = [
@@ -82,17 +81,62 @@ class MyAppState extends State<MyApp> {
             );
           }
 
-          return Scrollbar(
-            child: ListView.builder(
-              //itemCount: _coins.length,
-              physics: AlwaysScrollableScrollPhysics(),
-              itemCount: snapshot.data.length,
-              scrollDirection: Axis.vertical,
-              itemBuilder: (BuildContext context, int index) {
-                return CardItem(c: snapshot.data[index]);
-              },
+          return Stack(children: <Widget>[
+            Container(
+              // Add box decoration
+              decoration: BoxDecoration(
+                // Box decoration takes a gradient
+                gradient: LinearGradient(
+                  // Where the linear gradient begins and ends
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  // Add one stop for each color. Stops should increase from 0 to 1
+                  //stops: [0.1, 0.9],
+                  colors: [
+                    // Colors are easy thanks to Flutter's Colors class.
+                    Colors.purple,
+                    Colors.blue
+                  ],
+                ),
+              ),
             ),
-          );
+            Scrollbar(
+              child: ListView.builder(
+                //itemCount: _coins.length,
+                physics: AlwaysScrollableScrollPhysics(),
+                itemCount: snapshot.data.length,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (BuildContext context, int index) {
+                  if (index == 0) {
+                    return Column(
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(8, 8, 0, 0),
+                              child: Text(
+                                "Coin Watch",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                            )
+                          ],
+                        ),
+                        CardItem(
+                          c: snapshot.data[index],
+                        )
+                      ],
+                    );
+                  }
+                  return CardItem(c: snapshot.data[index]);
+                },
+              ),
+            )
+          ]);
         }),
     Text("News Page"),
     Text("Alerts")
@@ -102,14 +146,6 @@ class MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: Text(
-            _titles[_pageNumber],
-            style: TextStyle(color: Colors.white),
-          ),
-          elevation: 0,
-        ),
         /*
         appBar: AppBar(
           backgroundColor: Colors.deepPurple,
@@ -121,7 +157,8 @@ class MyAppState extends State<MyApp> {
           ),
         ),
         */
-        body: _pages[_pageNumber],
+        body: _pages[0],
+        /*
         bottomNavigationBar: BottomNavigationBar(
             elevation: 30,
             currentIndex: _pageNumber,
@@ -145,7 +182,8 @@ class MyAppState extends State<MyApp> {
                   icon: Icon(Icons.announcement),
                   title: Text("Alerts"),
                   backgroundColor: Colors.blueAccent),
-            ]),
+            ])
+            */
       ),
     );
   }
