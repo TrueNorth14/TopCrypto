@@ -17,7 +17,7 @@ class CardItem extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           //print("$coinData");
-          print("pressed $c");
+          //print("pressed $c");
           Navigator.of(context).push(MaterialPageRoute(builder: (context) {
             return DetailScreen(c: c);
           }));
@@ -27,10 +27,10 @@ class CardItem extends StatelessWidget {
           child: Container(
             height: 230,
             child: Card(
-              elevation: 50,
+              elevation: 30,
               borderOnForeground: true,
               //borderRadius: BorderRadius.circular(8),
-
+                    
               //margin: EdgeInsets.all(8),
               child: Column(
                 mainAxisSize: MainAxisSize.max,

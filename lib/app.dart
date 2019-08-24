@@ -82,21 +82,24 @@ class MyAppState extends State<MyApp> {
           }
 
           return Stack(children: <Widget>[
-            Container(
-              // Add box decoration
-              decoration: BoxDecoration(
-                // Box decoration takes a gradient
-                gradient: LinearGradient(
-                  // Where the linear gradient begins and ends
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  // Add one stop for each color. Stops should increase from 0 to 1
-                  //stops: [0.1, 0.9],
-                  colors: [
-                    // Colors are easy thanks to Flutter's Colors class.
-                    Colors.purple,
-                    Colors.blue
-                  ],
+            ClipPath(
+              clipper: ClippingClass(),
+              child: Container(
+                // Add box decoration
+                decoration: BoxDecoration(
+                  // Box decoration takes a gradient
+                  gradient: LinearGradient(
+                    // Where the linear gradient begins and ends
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    // Add one stop for each color. Stops should increase from 0 to 1
+                    //stops: [0.1, 0.9],
+                    colors: [
+                      // Colors are easy thanks to Flutter's Colors class.
+                      Colors.purple,
+                      Colors.blue
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -113,12 +116,12 @@ class MyAppState extends State<MyApp> {
                         Row(
                           children: <Widget>[
                             Padding(
-                              padding: EdgeInsets.fromLTRB(8, 8, 0, 0),
+                              padding: EdgeInsets.fromLTRB(8, 15, 0, 0),
                               child: Text(
                                 "Coin Watch",
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 25,
+                                  fontSize: 30,
                                   fontWeight: FontWeight.w500,
                                 ),
                                 textAlign: TextAlign.left,
@@ -188,3 +191,5 @@ class MyAppState extends State<MyApp> {
     );
   }
 }
+
+

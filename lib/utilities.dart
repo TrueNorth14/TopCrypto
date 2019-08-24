@@ -10,6 +10,22 @@ class DimensionHolder {
 }
 
 
+class ClippingClass extends CustomClipper<Path>{
+  @override
+  Path getClip(Size size) {
+    // TODO: implement getClip
+    var path = Path();
+    path.lineTo(0, size.height-30);
+    path.quadraticBezierTo(150, size.height-70, size.width, 0);
+    path.lineTo(size.width, 0);   
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+}
+
 class CoinHistory {
   final double change;
   final List priceTime;

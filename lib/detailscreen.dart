@@ -117,11 +117,10 @@ class DetailScreenState extends State<DetailScreen> {
                   //sleep(Duration(milliseconds: 500));
                   return Container(
                     height: 300,
-                    margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                    //margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                     child: TimeSeriesChart(
                       snapshot.data,
                       animate: false,
-                      animationDuration: Duration(milliseconds: 1000),
                       primaryMeasureAxis: NumericAxisSpec(
                         tickProviderSpec: BasicNumericTickProviderSpec(
                             zeroBound: false, dataIsInWholeNumbers: false),
