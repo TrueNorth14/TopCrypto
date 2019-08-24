@@ -16,8 +16,7 @@ class MyAppState extends State<MyApp> {
   static int _pageNumber = 0;
   static final _titles = ["Coins", "News", "Alerts"];
   static List<dynamic> _coins;
-  static DimensionHolder dimensions = new DimensionHolder(100, 200);
-
+  
   static Future<List<Coin>> _getCoinData() async {
     List<Coin> crypto = [];
 

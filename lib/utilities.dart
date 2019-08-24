@@ -2,22 +2,12 @@ import 'package:e_pal/detailscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart';
 
-class DimensionHolder {
-  double height;
-  double width;
-
-  DimensionHolder(this.height, this.width);
-}
-
-
 class ClippingClass extends CustomClipper<Path>{
   @override
   Path getClip(Size size) {
     // TODO: implement getClip
     var path = Path();
-    path.lineTo(0, size.height-30);
-    path.quadraticBezierTo(150, size.height-70, size.width, 0);
-    path.lineTo(size.width, 0);   
+    path..lineTo(0, size.height-30)..quadraticBezierTo(150, size.height-70, size.width, 0)..lineTo(size.width, 0);   
 
     return path;
   }
