@@ -2,12 +2,15 @@ import 'package:e_pal/detailscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart';
 
-class ClippingClass extends CustomClipper<Path>{
+class ClippingClass extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     // TODO: implement getClip
     var path = Path();
-    path..lineTo(0, size.height-30)..quadraticBezierTo(150, size.height-70, size.width, 0)..lineTo(size.width, 0);   
+    path
+      ..lineTo(0, size.height - 30)
+      ..quadraticBezierTo(150, size.height - 70, size.width, 0)
+      ..lineTo(size.width, 0);
 
     return path;
   }
@@ -27,7 +30,6 @@ class CoinHistory {
     return change.toString() + " " + priceTime.toString();
   }
 }
-
 
 class Coin {
   final int index;
@@ -127,7 +129,6 @@ List<Series<MyRow, DateTime>> createChartData(List coinHistory, double change) {
           ? MaterialPalette.green.shadeDefault.darker
           : MaterialPalette.red.shadeDefault,
       data: data,
-      
     )
   ];
 }

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'utilities.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:http/http.dart' as http;
 import 'package:charts_flutter/flutter.dart';
 import 'dart:io';
@@ -63,12 +63,13 @@ class DetailScreenState extends State<DetailScreen> {
       transitionOnUserGestures: false,
       child: Scaffold(
         
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
+        appBar: GradientAppBar(
+          elevation: 30,
+          backgroundColorStart: Colors.blue,
+          backgroundColorEnd: Colors.purple,
           leading: GestureDetector(
             onTap: () => Navigator.pop(context),
-            child: Icon(Icons.arrow_back, color: Colors.black),
+            child: Icon(Icons.arrow_back, color: Colors.white),
           ),
         ),
         body: Column(
