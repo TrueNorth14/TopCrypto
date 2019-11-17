@@ -35,7 +35,7 @@ class Coin {
   final int index;
   final String symbol;
   final String name;
-  final String color;
+  String color;
   final String iconUrl;
   final double price;
   final double change;

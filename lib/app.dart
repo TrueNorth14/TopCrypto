@@ -16,7 +16,9 @@ class MyAppState extends State<MyApp> {
   static int _pageNumber = 0;
   static final _titles = ["Coins", "News", "Alerts"];
   static List<dynamic> _coins;
-  
+  //TabController _tabController;
+  ScrollController _scrollViewController;
+
   static Future<List<Coin>> _getCoinData() async {
     List<Coin> crypto = [];
 
@@ -49,9 +51,11 @@ class MyAppState extends State<MyApp> {
           convertListDouble(coin["history"]));
       //print(c);
 
-      if (c.color != null) {
-        crypto.add(c);
+      if (c.color == null) {
+        c.color = "#000000";
       }
+
+      crypto.add(c);
     }
 
     print(crypto.length);
@@ -63,83 +67,40 @@ class MyAppState extends State<MyApp> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    //_tabController = TabController(length: 3, vsync: this);
+    _scrollViewController = ScrollController();
   }
 
-  final List _pages = [
-    FutureBuilder(
-        future: _getCoinData(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.data == null) {
-            print(snapshot.connectionState);
-            print(snapshot.data);
-            if (snapshot.hasError) {
-              print(snapshot.error);
-            }
-            return Container(
-              child: Center(child: CircularProgressIndicator()),
-            );
-          }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    //_tabController.dispose();
+    _scrollViewController.dispose();
+    super.dispose();
+  }
 
-          return Stack(children: <Widget>[
-            ClipPath(
-              clipper: ClippingClass(),
-              child: Container(
-                // Add box decoration
-                decoration: BoxDecoration(
-                  // Box decoration takes a gradient
-                  gradient: LinearGradient(
-                    // Where the linear gradient begins and ends
-                    begin: Alignment.topRight,
-                    end: Alignment.bottomLeft,
-                    // Add one stop for each color. Stops should increase from 0 to 1
-                    //stops: [0.1, 0.9],
-                    colors: [
-                      // Colors are easy thanks to Flutter's Colors class.
-                      Colors.purple,
-                      Colors.blue
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Scrollbar(
-              child: ListView.builder(
-                //itemCount: _coins.length,
-                physics: AlwaysScrollableScrollPhysics(),
-                itemCount: snapshot.data.length,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == 0) {
-                    return Column(
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(8, 15, 0, 0),
-                              child: Text(
-                                "Coin Watch",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                            )
-                          ],
-                        ),
-                        CardItem(
-                          c: snapshot.data[index],
-                        )
-                      ],
-                    );
-                  }
-                  return CardItem(c: snapshot.data[index]);
-                },
-              ),
-            )
-          ]);
-        }),
+  final List<Widget> _pages = [
+    FutureBuilder(
+      future: _getCoinData(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.data == null) {
+          print(snapshot.connectionState);
+          print(snapshot.data);
+          if (snapshot.hasError) {
+            print(snapshot.error);
+          }
+          return Container(
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: snapshot.data.length,
+          itemBuilder: (BuildContext context, int index) =>
+              CardItem(c: snapshot.data[index]),
+        );
+      },
+    ),
     Text("News Page"),
     Text("Alerts")
   ];
@@ -147,48 +108,57 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        /*
-        appBar: AppBar(
-          backgroundColor: Colors.deepPurple,
-          elevation: 0,
-          title: Text(
-            _titles[_pageNumber],
-            style: TextStyle(
-                color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
+      home: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          //body: _pages[0],
+          body: NestedScrollView(
+            body: TabBarView(
+              children: _pages,
+            ),
+            controller: _scrollViewController,
+            headerSliverBuilder: (BuildContext context, bool boxIsScorlled) {
+              return [
+                SliverAppBar(
+                  title: Text("Top Crypto"),
+                  elevation: 0,
+                  floating: true,
+                  pinned: true,
+                  expandedHeight: MediaQuery.of(context).size.height/3,
+                  backgroundColor: Colors.indigoAccent[700],
+                  bottom: TabBar(
+                    //controller: _tabController,
+                    indicatorWeight: 4,
+                    indicatorColor: Colors.white,
+                    isScrollable: false,
+                    tabs: <Widget>[
+                      Tab(
+                        text: "Stats",
+                        icon: Icon(Icons.show_chart
+                            //Icons.account_balance_wallet,
+                            ),
+                      ),
+                      Tab(
+                        text: "News",
+                        icon: Icon(
+                          Icons.library_books,
+                        ),
+                      ),
+                      Tab(
+                        text: "Alerts",
+                        icon: Icon(
+                          Icons.add_alert,
+                        ),
+                      )
+                    ],
+                    //controller: TabController(length: 3, vsync: TickerProvider(),),
+                  ),
+                ),
+              ];
+            },
           ),
         ),
-        */
-        body: _pages[0],
-        /*
-        bottomNavigationBar: BottomNavigationBar(
-            elevation: 30,
-            currentIndex: _pageNumber,
-            selectedItemColor: Colors.blue,
-            onTap: (int index) {
-              setState(() {
-                _pageNumber = index;
-              });
-            },
-            items: [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.timeline),
-                title: Text("Coins"),
-                backgroundColor: Colors.blueAccent,
-              ),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.library_books),
-                  title: Text("News"),
-                  backgroundColor: Colors.blueAccent),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.announcement),
-                  title: Text("Alerts"),
-                  backgroundColor: Colors.blueAccent),
-            ])
-            */
       ),
     );
   }
 }
-
-

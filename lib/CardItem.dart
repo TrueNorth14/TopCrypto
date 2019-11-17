@@ -25,7 +25,7 @@ class CardItem extends StatelessWidget {
           child: Container(
             height: 230,
             child: Card(
-              elevation: 30,
+              elevation: 10,
               borderOnForeground: true,
               //borderRadius: BorderRadius.circular(8),
 
