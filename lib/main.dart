@@ -3,16 +3,10 @@ import 'app.dart';
 
 
 
-main() {
-  runApp(MyApp());
-}
-
+main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() {
-    
-    return MyAppState();
-  }
+  State<StatefulWidget> createState() => MyAppState();
 }
 
