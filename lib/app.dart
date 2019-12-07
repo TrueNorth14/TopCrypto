@@ -4,15 +4,19 @@ import 'package:flutter/material.dart';
 import 'main.dart';
 import 'utilities.dart';
 import 'CardItem.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'newspage.dart';
 
 //3 god bless em
 
 Map<String, dynamic> data;
 
-//Map<String, String> _coinNames = {"Bitcoin": "BTC", "Ethereum": "ETH"};
+class MyApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _MyAppState();
+}
 
-class MyAppState extends State<MyApp> {
+
+class _MyAppState extends State<MyApp> {
   static int _pageNumber = 0;
   static final _titles = ["Coins", "News", "Alerts"];
   static List<dynamic> _coins;
@@ -65,7 +69,6 @@ class MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     //_tabController = TabController(length: 3, vsync: this);
     _scrollViewController = ScrollController();
@@ -73,7 +76,6 @@ class MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     //_tabController.dispose();
     _scrollViewController.dispose();
     super.dispose();
@@ -101,7 +103,7 @@ class MyAppState extends State<MyApp> {
         );
       },
     ),
-    Text("News Page"),
+    NewsPage(),
     Text("Alerts")
   ];
 
@@ -121,10 +123,12 @@ class MyAppState extends State<MyApp> {
               return [
                 SliverAppBar(
                   title: Text("Top Crypto"),
-                  elevation: 0,
+                  elevation: 10,
                   floating: true,
                   pinned: true,
-                  expandedHeight: MediaQuery.of(context).size.height/3,
+                  snap: true,
+                  expandedHeight: MediaQuery.of(context).size.height / 3,
+                  flexibleSpace: MyFlexibleSpace(),
                   backgroundColor: Colors.indigoAccent[700],
                   bottom: TabBar(
                     //controller: _tabController,
@@ -134,21 +138,15 @@ class MyAppState extends State<MyApp> {
                     tabs: <Widget>[
                       Tab(
                         text: "Stats",
-                        icon: Icon(Icons.show_chart
-                            //Icons.account_balance_wallet,
-                            ),
+                        //icon: Icon(Icons.show_chart),
                       ),
                       Tab(
                         text: "News",
-                        icon: Icon(
-                          Icons.library_books,
-                        ),
+                        //icon: Icon(Icons.library_books),
                       ),
                       Tab(
                         text: "Alerts",
-                        icon: Icon(
-                          Icons.add_alert,
-                        ),
+                        //icon: Icon(Icons.add_alert),
                       )
                     ],
                     //controller: TabController(length: 3, vsync: TickerProvider(),),
@@ -161,4 +159,55 @@ class MyAppState extends State<MyApp> {
       ),
     );
   }
+}
+
+class MyFlexibleSpace extends StatelessWidget {
+  Future<MarketInfo> _getMarketInfo() async {
+    MarketInfo info;
+
+    var response = await http.get(
+        Uri.encodeFull('https://api.coinranking.com/v1/public/stats?base=USD'),
+        headers: {'accept': 'application/json'});
+
+    var responseToJson = jsonDecode(response.body);
+    data = responseToJson['data'];
+    info = MarketInfo(data['totalMarketCap'], data['total24hVolume']);
+
+    return info;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return FlexibleSpaceBar(
+      collapseMode: CollapseMode.parallax,
+      background: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FutureBuilder(
+            future: _getMarketInfo(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return Text(
+                "Total Market Cap: " +
+                    ((snapshot.data != null)
+                        ? snapshot.data.totalMarketCap.toString()
+                        : "Loading..."),
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              );
+            },
+          )
+        ],
+      ),
+      centerTitle: true,
+    );
+  }
+}
+
+class MarketInfo {
+  final double totalMarketCap;
+  final double total24hVolume;
+
+  MarketInfo(this.totalMarketCap, this.total24hVolume);
+
+  bool hasData() => (total24hVolume != null && totalMarketCap != null);
 }
