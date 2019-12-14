@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/rendering.dart';
@@ -45,8 +44,8 @@ class NewsPage extends StatelessWidget {
     print(newsData.length);
 
     for (var item in newsData) {
-      String printed = item.toString() + " \n";
-      print(printed);
+      //String printed = item.toString() + " \n";
+      //print(printed);
     }
     _news = newsData;
     return _news;
@@ -54,13 +53,16 @@ class NewsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    var size = MediaQuery.of(context).size;
+    var width = size.width;
+    double cardHeight = 400; //vertical dimension of card
+
     return FutureBuilder(
       future: _getNewsData(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.data == null) {
           print(snapshot.connectionState);
-          print(snapshot.data);
+          //print(snapshot.data);
           if (snapshot.hasError) {
             print(snapshot.error);
           }
@@ -71,18 +73,82 @@ class NewsPage extends StatelessWidget {
 
         return ListView.builder(
           itemCount: snapshot.data.length,
-          itemBuilder: (BuildContext context, int index) => SizedBox(
-            height: 230,
-            child: Material(
-              elevation: 20,
-              child: Column(
-                children: [
-                  Container(
-                    //height: 170,
-                    child: Image.network(snapshot.data[index].urlToImage, fit: BoxFit.fill,),
+          itemBuilder: (BuildContext context, int index) => Material(
+            borderRadius: BorderRadius.circular(10.0),
+            elevation: 0.0,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(15, 0, 15, 25),
+              child: Container(
+                  height: cardHeight,
+                  //width: width - 30,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                    // the box shawdow property allows for fine tuning as aposed to shadowColor
+                    image: DecorationImage(
+                        image: NetworkImage(snapshot.data[index].urlToImage),
+                        alignment: Alignment.topCenter,
+                        fit: BoxFit.fitHeight),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.grey,
+                          // offset, the X,Y coordinates to offset the shadow
+                          offset: Offset(0.0, 10.0),
+                          // blurRadius, the higher the number the more smeared look
+                          blurRadius: 10.0,
+                          spreadRadius: 1.0)
+                    ],
                   ),
-                ],
-              ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      //Spacer(),
+                      Container(
+                        height: cardHeight / 3,
+                        //width: ,
+                        //constraints: BoxConstraints.expand(),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                child: Text(
+                                  snapshot.data[index].title,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.clip,
+                                ),
+                              )
+                            ]),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.transparent, Colors.black]),
+                        ),
+                      ),
+                      Container(
+                        height: cardHeight / 4,
+                        //width: width - 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          //borderRadius: BorderRadius.circular(10)
+
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                  // child: Text("This is where your content goes")
+                  ),
             ),
           ),
         );
@@ -98,8 +164,6 @@ class NewsPage extends StatelessWidget {
   }
 }
 
-//abc51b3de0f14f8482de2fe88e65c229
-
 class News {
   final String author;
   final String title;
@@ -114,9 +178,7 @@ class News {
 
   @override
   String toString() {
-    return this.content;
-
-    /*this.author +
+    return this.author +
         " " +
         this.title +
         " " +
@@ -126,9 +188,8 @@ class News {
         " " +
         this.urlToImage +
         " " +
-        this.publishedAt; +
-        
+        this.publishedAt +
         " " +
-        this.content; */
+        this.content;
   }
 }
