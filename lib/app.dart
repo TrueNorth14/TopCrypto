@@ -1,25 +1,22 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'main.dart';
 import 'utilities.dart';
 import 'CardItem.dart';
 import 'newspage.dart';
 
 //3 god bless em
 
-Map<String, dynamic> data;
-
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _MyAppState();
 }
 
-
 class _MyAppState extends State<MyApp> {
   static int _pageNumber = 0;
   static final _titles = ["Coins", "News", "Alerts"];
   static List<dynamic> _coins;
+  static Map<String, dynamic> data;
   //TabController _tabController;
   ScrollController _scrollViewController;
 
@@ -162,6 +159,8 @@ class _MyAppState extends State<MyApp> {
 }
 
 class MyFlexibleSpace extends StatelessWidget {
+  static Map<String, dynamic> data;
+
   Future<MarketInfo> _getMarketInfo() async {
     MarketInfo info;
 
@@ -181,24 +180,35 @@ class MyFlexibleSpace extends StatelessWidget {
     // TODO: implement build
     return FlexibleSpaceBar(
       collapseMode: CollapseMode.parallax,
+      centerTitle: true,
       background: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           FutureBuilder(
             future: _getMarketInfo(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
-              return Text(
-                "Total Market Cap: " +
-                    ((snapshot.data != null)
-                        ? snapshot.data.totalMarketCap.toString()
-                        : "Loading..."),
-                style: TextStyle(color: Colors.white, fontSize: 20),
+              return Column(
+                children: <Widget>[
+                  Text(
+                    "Total Market Cap: " +
+                        ((snapshot.data != null)
+                            ? snapshot.data.totalMarketCap.toString()
+                            : "Loading..."),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                  Text(
+                    "24hr Market Volume: " +
+                        ((snapshot.data != null)
+                            ? snapshot.data.total24hVolume.toString()
+                            : "Loading..."),
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  ),
+                ],
               );
             },
           )
         ],
       ),
-      centerTitle: true,
     );
   }
 }
