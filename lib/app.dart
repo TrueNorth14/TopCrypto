@@ -123,7 +123,7 @@ class _MyAppState extends State<MyApp> {
                   elevation: 10,
                   floating: true,
                   pinned: true,
-                  snap: true,
+                  //snap: true,
                   expandedHeight: MediaQuery.of(context).size.height / 3,
                   flexibleSpace: MyFlexibleSpace(),
                   backgroundColor: Colors.indigoAccent[700],
