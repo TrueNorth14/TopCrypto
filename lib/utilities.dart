@@ -2,22 +2,14 @@ import 'package:e_pal/detailscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart';
 
-class ClippingClass extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    // TODO: implement getClip
-    var path = Path();
-    path
-      ..lineTo(0, size.height - 30)
-      ..quadraticBezierTo(150, size.height - 70, size.width, 0)
-      ..lineTo(size.width, 0);
 
-    return path;
-  }
+/* Utilities file contains Models and an assortment of miscellaneous functions.
+ * 
+ * IMPORTANT: This file does not and should not contain UI elements.
+*/
 
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
-}
+
+/* Models */
 
 class CoinHistory {
   final double change;
@@ -62,6 +54,59 @@ class Coin {
         this.index.toString();
   }
 }
+
+// Sample time series data type.
+class MyRow {
+  final DateTime timeStamp;
+  final double cost;
+  MyRow(this.timeStamp, this.cost);
+
+  String toString() {
+    return timeStamp.toString();
+  }
+}
+
+class MarketInfo {
+  final double totalMarketCap;
+  final double total24hVolume;
+
+  MarketInfo(this.totalMarketCap, this.total24hVolume);
+
+  bool hasData() => (total24hVolume != null && totalMarketCap != null);
+}
+
+class News {
+  final String author;
+  final String title;
+  final String description;
+  final String url;
+  final String urlToImage;
+  final String publishedAt;
+  final String content;
+
+  News(this.author, this.title, this.description, this.url, this.urlToImage,
+      this.publishedAt, this.content);
+
+  @override
+  String toString() {
+    return this.author +
+        " " +
+        this.title +
+        " " +
+        this.description +
+        " " +
+        this.url +
+        " " +
+        this.urlToImage +
+        " " +
+        this.publishedAt +
+        " " +
+        this.content;
+  }
+}
+
+
+
 
 int getColorFromHex(String hexColor) {
   hexColor = hexColor.toUpperCase().replaceAll("#", "");
@@ -133,13 +178,3 @@ List<Series<MyRow, DateTime>> createChartData(List coinHistory, double change) {
   ];
 }
 
-/// Sample time series data type.
-class MyRow {
-  final DateTime timeStamp;
-  final double cost;
-  MyRow(this.timeStamp, this.cost);
-
-  String toString() {
-    return timeStamp.toString();
-  }
-}
