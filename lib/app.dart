@@ -5,20 +5,145 @@ import 'utilities.dart';
 import 'CardItem.dart';
 import 'newspage.dart';
 
-//3 god bless em
-
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  static int _pageNumber = 0;
-  static final _titles = ["Coins", "News", "Alerts"];
+  ScrollController _scrollViewController;
+
+  @override
+  void initState() {
+    super.initState();
+    //Initialize scrolll controller when the widget is built
+    _scrollViewController = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    //Dispose the scroll controller to avoid memory leaks
+    _scrollViewController.dispose();
+    super.dispose();
+  }
+
+  final List<Widget> _pages = [
+    StatsPage(),
+    NewsPage(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          //body: _pages[0],
+          body: NestedScrollView(
+            body: TabBarView(
+              children: _pages,
+            ),
+            controller: _scrollViewController,
+            headerSliverBuilder: (BuildContext context, bool boxIsScorlled) {
+              return [
+                SliverAppBar(
+                  title: Text("Top Crypto"),
+                  elevation: 10,
+                  floating: true,
+                  pinned: true,
+                  //snap: true,
+                  expandedHeight: MediaQuery.of(context).size.height / 3,
+                  flexibleSpace: MyFlexibleSpace(),
+                  backgroundColor: Colors.indigoAccent[700],
+                  bottom: TabBar(
+                    //controller: _tabController,
+                    indicatorWeight: 4,
+                    indicatorColor: Colors.white,
+                    isScrollable: false,
+                    tabs: <Widget>[
+                      Tab(
+                        text: "Stats",
+                      ),
+                      Tab(
+                        text: "News",
+                      )
+                    ],
+                  ),
+                ),
+              ];
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MyFlexibleSpace extends StatelessWidget {
+  static Map<String, dynamic> data;
+
+  Future<MarketInfo> _getMarketInfo() async {
+    MarketInfo info;
+
+    var response = await http.get(
+        Uri.encodeFull('https://api.coinranking.com/v1/public/stats?base=USD'),
+        headers: {'accept': 'application/json'});
+
+    var responseToJson = jsonDecode(response.body);
+    data = responseToJson['data'];
+    info = MarketInfo(data['totalMarketCap'], data['total24hVolume']);
+
+    return info;
+  }
+
+  static Widget _globalStatsBuilder(
+      BuildContext context, AsyncSnapshot snapshot) {
+    return Column(
+      children: <Widget>[
+        Text(
+          "Total Market Cap: " +
+              ((snapshot.data != null)
+                  ? snapshot.data.totalMarketCap.toString()
+                  : "Loading..."),
+          style: TextStyle(color: Colors.white, fontSize: 20),
+        ),
+        Text(
+          "24hr Market Volume: " +
+              ((snapshot.data != null)
+                  ? snapshot.data.total24hVolume.toString()
+                  : "Loading..."),
+          style: TextStyle(color: Colors.white, fontSize: 20),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FlexibleSpaceBar(
+      collapseMode: CollapseMode.parallax,
+      centerTitle: true,
+      background: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          FutureBuilder(
+              future: _getMarketInfo(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) =>
+                  _globalStatsBuilder(context, snapshot))
+        ],
+      ),
+    );
+  }
+}
+
+class StatsPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _StatsPageState();
+}
+
+class _StatsPageState extends State<StatsPage> {
   static List<dynamic> _coins;
   static Map<String, dynamic> data;
-  //TabController _tabController;
-  ScrollController _scrollViewController;
 
   static Future<List<Coin>> _getCoinData() async {
     List<Coin> crypto = [];
@@ -64,160 +189,27 @@ class _MyAppState extends State<MyApp> {
     //var allCoins = new DataHolder(coins);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    //_tabController = TabController(length: 3, vsync: this);
-    _scrollViewController = ScrollController();
-  }
+  static Widget _statsPageBuilder(
+      BuildContext context, AsyncSnapshot snapshot) {
+    if (snapshot.data == null) {
+      return Container(
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
 
-  @override
-  void dispose() {
-    //_tabController.dispose();
-    _scrollViewController.dispose();
-    super.dispose();
-  }
-
-  final List<Widget> _pages = [
-    FutureBuilder(
-      future: _getCoinData(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.data == null) {
-          print(snapshot.connectionState);
-          print(snapshot.data);
-          if (snapshot.hasError) {
-            print(snapshot.error);
-          }
-          return Container(
-            child: Center(child: CircularProgressIndicator()),
-          );
-        }
-
-        return ListView.builder(
-          itemCount: snapshot.data.length,
-          itemBuilder: (BuildContext context, int index) =>
-              CardItem(c: snapshot.data[index]),
-        );
-      },
-    ),
-    NewsPage(),
-    Text("Alerts")
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          //body: _pages[0],
-          body: NestedScrollView(
-            body: TabBarView(
-              children: _pages,
-            ),
-            controller: _scrollViewController,
-            headerSliverBuilder: (BuildContext context, bool boxIsScorlled) {
-              return [
-                SliverAppBar(
-                  title: Text("Top Crypto"),
-                  elevation: 10,
-                  floating: true,
-                  pinned: true,
-                  //snap: true,
-                  expandedHeight: MediaQuery.of(context).size.height / 3,
-                  flexibleSpace: MyFlexibleSpace(),
-                  backgroundColor: Colors.indigoAccent[700],
-                  bottom: TabBar(
-                    //controller: _tabController,
-                    indicatorWeight: 4,
-                    indicatorColor: Colors.white,
-                    isScrollable: false,
-                    tabs: <Widget>[
-                      Tab(
-                        text: "Stats",
-                        //icon: Icon(Icons.show_chart),
-                      ),
-                      Tab(
-                        text: "News",
-                        //icon: Icon(Icons.library_books),
-                      ),
-                      Tab(
-                        text: "Alerts",
-                        //icon: Icon(Icons.add_alert),
-                      )
-                    ],
-                    //controller: TabController(length: 3, vsync: TickerProvider(),),
-                  ),
-                ),
-              ];
-            },
-          ),
-        ),
-      ),
+    return ListView.builder(
+      itemCount: snapshot.data.length,
+      itemBuilder: (BuildContext context, int index) =>
+          CardItem(c: snapshot.data[index]),
     );
-  }
-}
-
-class MyFlexibleSpace extends StatelessWidget {
-  static Map<String, dynamic> data;
-
-  Future<MarketInfo> _getMarketInfo() async {
-    MarketInfo info;
-
-    var response = await http.get(
-        Uri.encodeFull('https://api.coinranking.com/v1/public/stats?base=USD'),
-        headers: {'accept': 'application/json'});
-
-    var responseToJson = jsonDecode(response.body);
-    data = responseToJson['data'];
-    info = MarketInfo(data['totalMarketCap'], data['total24hVolume']);
-
-    return info;
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return FlexibleSpaceBar(
-      collapseMode: CollapseMode.parallax,
-      centerTitle: true,
-      background: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FutureBuilder(
-            future: _getMarketInfo(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              return Column(
-                children: <Widget>[
-                  Text(
-                    "Total Market Cap: " +
-                        ((snapshot.data != null)
-                            ? snapshot.data.totalMarketCap.toString()
-                            : "Loading..."),
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                  Text(
-                    "24hr Market Volume: " +
-                        ((snapshot.data != null)
-                            ? snapshot.data.total24hVolume.toString()
-                            : "Loading..."),
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                ],
-              );
-            },
-          )
-        ],
-      ),
-    );
+    return FutureBuilder(
+        future: _getCoinData(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) =>
+            _statsPageBuilder(context, snapshot));
   }
-}
-
-class MarketInfo {
-  final double totalMarketCap;
-  final double total24hVolume;
-
-  MarketInfo(this.totalMarketCap, this.total24hVolume);
-
-  bool hasData() => (total24hVolume != null && totalMarketCap != null);
 }
