@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/rendering.dart';
+import 'utilities.dart';
 import 'config.dart';
 
 class NewsPage extends StatelessWidget {
@@ -47,7 +48,7 @@ class NewsPage extends StatelessWidget {
     return _news;
   }
 
-  AsyncSnapshot _capture = null;
+  static AsyncSnapshot _capture = null;
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +72,7 @@ class NewsPage extends StatelessWidget {
         }
         //}
 
+        
         _capture =
             snapshot; //store the snapshot so that future is not called every time state is built
 
@@ -179,35 +181,5 @@ class NewsPage extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-class News {
-  final String author;
-  final String title;
-  final String description;
-  final String url;
-  final String urlToImage;
-  final String publishedAt;
-  final String content;
-
-  News(this.author, this.title, this.description, this.url, this.urlToImage,
-      this.publishedAt, this.content);
-
-  @override
-  String toString() {
-    return this.author +
-        " " +
-        this.title +
-        " " +
-        this.description +
-        " " +
-        this.url +
-        " " +
-        this.urlToImage +
-        " " +
-        this.publishedAt +
-        " " +
-        this.content;
   }
 }
