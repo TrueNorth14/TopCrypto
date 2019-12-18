@@ -23,6 +23,7 @@ dependencies:
   flutter_sparkline: ^0.1.0
   charts_flutter: ^0.6.0
   gradient_app_bar: ^0.0.1
+  webview_flutter: ^0.3.0
 
   flutter:
     sdk: flutter
